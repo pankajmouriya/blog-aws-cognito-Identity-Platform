@@ -1,0 +1,43 @@
+<html>
+<head>
+    <title>Cognito Example</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.32.0/aws-sdk.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Load the Facebook SDK
+            $.getScript('//connect.facebook.net/en_US/sdk.js', function() {
+                FB.init({
+                    appId: '129742928931291',
+                    version: 'v2.8'
+                });
+
+                // Log the user in
+                FB.login(function (response) {
+                    // Check if the user logged in successfully.
+                    if (response.authResponse) {
+                        AWS.config.region = 'ap-southeast-2';
+
+                        // Add the Facebook access token to the Cognito credentials login map.
+                        AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+                            IdentityPoolId: 'us-east-1:af9680d3-58a4-49fd-807f-421191445bc8',
+                            Logins: {
+                                'graph.facebook.com': response.authResponse.accessToken
+                            }
+                        });
+
+                        // Obtain AWS credentials
+                        AWS.config.credentials.get(function() {
+                            console.log(AWS.config.credentials);
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div id="fb-root"></div>
+</body>
+</html>
